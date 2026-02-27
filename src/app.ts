@@ -83,3 +83,5 @@ export async function buildApp(): Promise<ReturnType<typeof Fastify>> {
 
   return app;
 }
+
+export default await buildApp();
