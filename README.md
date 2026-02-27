@@ -8,6 +8,7 @@ REST API for customer feedback analysis using Anthropic Claude. Accepts feedback
 - **@fastify/cors** – CORS
 - **@fastify/env** – env validation and config
 - **@fastify/rate-limit** – rate limiting
+- **@fastify/swagger** & **@fastify/swagger-ui** – OpenAPI and `/documentation`
 - **pino-pretty** – dev logging
 - **@anthropic-ai/sdk** – Claude API
 
@@ -73,9 +74,10 @@ Feedback in any language is analysed; summary and sentiment are always returned 
 The project is fully TypeScript:
 
 - **Strict mode** and extra flags: `noUncheckedIndexedAccess`, `noImplicitOverride`, `noFallthroughCasesInSwitch`
-- **Type-checking** of tests via `npm run typecheck` (uses `tsconfig.typecheck.json` including `**/*.test.ts`)
-- **ESLint** with `typescript-eslint` and type-aware rules (parser uses `tsconfig.typecheck.json`)
-- **Build** excludes test files from `dist/` via `tsconfig.json` exclude
+- **Source imports** use `.ts` extensions; the build rewrites them to `.js` in `dist/` via `rewriteRelativeImportExtensions` (TS 5.7+)
+- **Type-checking** of the whole codebase (including tests) via `npm run typecheck` (`tsconfig.typecheck.json`)
+- **ESLint** with type-aware rules using `tsconfig.eslint.json` (includes config files and tests)
+- **Build** emits only application code to `dist/`; test files are excluded in `tsconfig.json`
 
 ## Project structure
 
@@ -115,10 +117,61 @@ This project is set up to deploy on [Vercel](https://vercel.com) with zero-confi
 
 **Note:** Rate limiting is in-memory per instance; on serverless it applies per function instance, not globally.
 
-## Production
+## Production deploy on AWS (EC2 / VPS)
 
-- Set `NODE_ENV=production`.
-- Use a process manager (e.g. PM2) or container orchestration when not on Vercel.
-- Ensure `ANTHROPIC_API_KEY` is set via env (no secrets in code).
-- Adjust `RATE_LIMIT_MAX` and `RATE_LIMIT_TIME_WINDOW_MS` as needed.
-- Health check: `GET /health` returns `{ "status": "ok" }`.
+For a long-running Node server on an AWS EC2 instance or another VPS:
+
+### Requirements
+
+- **Node.js 22+** (see `engines` in `package.json`). Install via [NodeSource](https://github.com/nodesource/distributions) or your distro’s package manager.
+
+### Build and run
+
+1. **Clone and install**
+   ```bash
+   git clone <your-repo-url> feedback && cd feedback
+   npm ci
+   ```
+
+2. **Environment**
+   - Copy `.env.example` to `.env` (or set variables in the shell/systemd/PM2).
+   - Set `ANTHROPIC_API_KEY` and optionally `NODE_ENV=production`, `PORT`, `HOST`, `ANTHROPIC_MODEL`, `RATE_LIMIT_*`.
+
+3. **Build and start**
+   ```bash
+   npm run build
+   npm start
+   ```
+   The app listens on `HOST:PORT` (default `0.0.0.0:3000`). Health: `GET /health` → `{ "status": "ok" }`.
+
+### Process manager (recommended)
+
+- **PM2**
+  ```bash
+  npm install -g pm2
+  npm run build
+  pm2 start dist/index.js --name feedback-api
+  pm2 save && pm2 startup
+  ```
+  Use `pm2 env` or a `.env` file in the app directory so the process sees `ANTHROPIC_API_KEY` and other vars.
+
+- **systemd** – Create a unit that runs `node /path/to/feedback/dist/index.js` with `EnvironmentFile=/path/to/feedback/.env` and `Restart=always`.
+
+### Security and networking
+
+- **Firewall** – Open only the HTTP(S) port (e.g. 80/443) and SSH; leave 3000 closed from the internet if you put a reverse proxy in front.
+- **Reverse proxy** – Put Nginx (or Caddy) in front; proxy to `http://127.0.0.1:3000` and terminate TLS. Optionally add rate limiting and static assets at the proxy.
+- **Secrets** – Keep `ANTHROPIC_API_KEY` in env or a secrets manager; never commit `.env` (it’s in `.gitignore`).
+
+### Health check
+
+- **Endpoint:** `GET /health` → `{ "status": "ok" }`.
+- Use this for load balancer health checks, monitoring, or uptime checks.
+
+## Production (general)
+
+- Set **`NODE_ENV=production`**.
+- Use a **process manager** (e.g. PM2) or container/orchestration when not on Vercel; see [Production deploy on AWS (EC2 / VPS)](#production-deploy-on-aws-ec2--vps) above.
+- Ensure **`ANTHROPIC_API_KEY`** is set via env (no secrets in code).
+- Tune **`RATE_LIMIT_MAX`** and **`RATE_LIMIT_TIME_WINDOW_MS`** as needed.
+- **Health check:** `GET /health` returns `{ "status": "ok" }`.
