@@ -1,4 +1,4 @@
-import Anthropic from "@anthropic-ai/sdk";
+import { Anthropic } from "@anthropic-ai/sdk";
 import type { AnalyseFeedbackResult, SentimentLabel } from "../models/feedback.js";
 
 const SENTIMENTS: SentimentLabel[] = ["positive", "neutral", "negative"];
@@ -65,8 +65,11 @@ export async function analyseFeedback(
       ],
     });
 
-    const block = message.content.find((b) => b.type === "text");
-    if (!block || block.type !== "text") {
+    type ContentBlock = { type: string; text?: string };
+    const block = message.content.find(
+      (b: ContentBlock) => b.type === "text"
+    );
+    if (!block || block.type !== "text" || typeof block.text !== "string") {
       throw new AnalyseFeedbackServiceError(
         "No text in AI response",
         "INVALID_RESPONSE"
