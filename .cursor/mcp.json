@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "fastify": {
+      "url": "https://gitmcp.io/fastify/fastify"
+    }
+  }
+}
