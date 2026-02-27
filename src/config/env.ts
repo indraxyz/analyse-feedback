@@ -3,12 +3,12 @@ import type { FastifyInstance } from "fastify";
 
 const envSchema = {
   type: "object",
-  required: ["ANTHROPIC_API_KEY"],
+  required: [],
   properties: {
     NODE_ENV: { type: "string", default: "development" },
     PORT: { type: "string", default: "3000" },
     HOST: { type: "string", default: "0.0.0.0" },
-    ANTHROPIC_API_KEY: { type: "string" },
+    ANTHROPIC_API_KEY: { type: "string", default: "" },
     ANTHROPIC_MODEL: { type: "string", default: "claude-sonnet-4-6" },
     RATE_LIMIT_MAX: { type: "string", default: "60" },
     RATE_LIMIT_TIME_WINDOW_MS: { type: "string", default: "60000" },

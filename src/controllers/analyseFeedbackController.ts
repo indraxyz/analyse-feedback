@@ -27,6 +27,15 @@ export async function handleAnalyseFeedback(
     return;
   }
 
+  if (!env.ANTHROPIC_API_KEY?.trim()) {
+    await reply.status(503).send({
+      error: "Service Unavailable",
+      message: "ANTHROPIC_API_KEY is not configured",
+      code: "API_KEY_MISSING",
+    });
+    return;
+  }
+
   try {
     const result = await analyseFeedback(feedback_text, {
       apiKey: env.ANTHROPIC_API_KEY,
