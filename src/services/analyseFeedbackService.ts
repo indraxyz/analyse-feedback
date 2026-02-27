@@ -1,5 +1,5 @@
 import { Anthropic } from "@anthropic-ai/sdk";
-import type { AnalyseFeedbackResult, SentimentLabel } from "../models/feedback.js";
+import type { AnalyseFeedbackResult, SentimentLabel } from "../models/feedback.ts";
 
 const SENTIMENTS: SentimentLabel[] = ["positive", "neutral", "negative"];
 

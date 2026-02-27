@@ -3,8 +3,8 @@ import cors from "@fastify/cors";
 import rateLimit from "@fastify/rate-limit";
 import swagger from "@fastify/swagger";
 import swaggerUi from "@fastify/swagger-ui";
-import { registerEnv, parseRateLimitConfig } from "./config/env.js";
-import { registerAnalyseFeedbackRoute } from "./routes/analyseFeedback.js";
+import { registerEnv, parseRateLimitConfig } from "./config/env.ts";
+import { registerAnalyseFeedbackRoute } from "./routes/analyseFeedback.ts";
 
 const WELCOME_HTML = `<!DOCTYPE html>
 <html lang="en">

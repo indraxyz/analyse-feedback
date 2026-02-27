@@ -1,8 +1,8 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
-import { analyseFeedback } from "../services/analyseFeedbackService.js";
-import type { Env } from "../config/env.js";
-import type { FeedbackAnalysisRequest } from "../models/feedback.js";
-import { AnalyseFeedbackServiceError } from "../services/analyseFeedbackService.js";
+import { analyseFeedback } from "../services/analyseFeedbackService.ts";
+import type { Env } from "../config/env.ts";
+import type { FeedbackAnalysisRequest } from "../models/feedback.ts";
+import { AnalyseFeedbackServiceError } from "../services/analyseFeedbackService.ts";
 
 const EMPTY_TEXT_MSG = "feedback_text must be a non-empty string";
 

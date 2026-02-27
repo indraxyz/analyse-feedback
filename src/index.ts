@@ -1,4 +1,4 @@
-import app from "./app.js";
+import app from "./app.ts";
 
 const port = parseInt(app.config.PORT, 10) || 3000;
 const host = app.config.HOST;

@@ -1,10 +1,10 @@
 import type { FastifyInstance } from "fastify";
-import type { Env } from "../config/env.js";
-import { handleAnalyseFeedback } from "../controllers/analyseFeedbackController.js";
+import type { Env } from "../config/env.ts";
+import { handleAnalyseFeedback } from "../controllers/analyseFeedbackController.ts";
 import {
   feedbackAnalysisRequestSchema,
   analyseFeedbackResponseSchema,
-} from "../models/feedback.js";
+} from "../models/feedback.ts";
 
 export async function registerAnalyseFeedbackRoute(
   app: FastifyInstance,
