@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: "feedback-api",
+      name: "feedback-analyzer",
       script: "dist/index.js",
       cwd: __dirname,
       instances: 1,

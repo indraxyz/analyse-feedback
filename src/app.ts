@@ -8,14 +8,21 @@ import { registerAnalyseFeedbackRoute } from "./routes/analyseFeedback.ts";
 
 const WELCOME_HTML = `<!DOCTYPE html>
 <html lang="en">
-<head><meta charset="utf-8"><title>Feedback API</title></head>
-<body>
-  <h1>Feedback API</h1>
-  <p>Server is running.</p>
-  <ul>
-    <li><a href="/health">Health</a></li>
-    <li><a href="/documentation">API documentation</a></li>
-  </ul>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Feedback API</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex flex-col items-center justify-center p-6 font-sans antialiased">
+  <main class="w-full max-w-md text-center">
+    <h1 class="text-3xl font-bold text-slate-800 tracking-tight mb-2">Feedback API</h1>
+    <p class="text-slate-600 mb-8">Server is running. Analyse customer feedback with Claude.</p>
+    <nav class="flex flex-col gap-3">
+      <a href="/health" class="block rounded-lg bg-white border border-slate-200 px-5 py-3 text-slate-700 font-medium shadow-sm hover:bg-slate-50 hover:border-slate-300 transition-colors">Health Check</a>
+      <a href="/documentation" class="block rounded-lg bg-slate-800 text-white px-5 py-3 font-medium shadow-sm hover:bg-slate-700 transition-colors">API documentation</a>
+    </nav>
+  </main>
 </body>
 </html>`;
 
@@ -71,8 +78,19 @@ export async function buildApp(): Promise<ReturnType<typeof Fastify>> {
       .send(
         `<!DOCTYPE html>
 <html lang="en">
-<head><meta charset="utf-8"><title>Not found</title></head>
-<body><h1>Page not found</h1><p>This URL is not known. <a href="/">Back to welcome</a>.</p></body>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Not found</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex flex-col items-center justify-center p-6 font-sans antialiased">
+  <main class="w-full max-w-md text-center">
+    <h1 class="text-2xl font-bold text-slate-800 mb-2">Page not found</h1>
+    <p class="text-slate-600 mb-6">This URL is not known.</p>
+    <a href="/" class="inline-block rounded-lg bg-slate-800 text-white px-5 py-3 font-medium shadow-sm hover:bg-slate-700 transition-colors">Back to welcome</a>
+  </main>
+</body>
 </html>`,
       );
   });
