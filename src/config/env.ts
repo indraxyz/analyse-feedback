@@ -8,6 +8,7 @@ const envSchema = {
     NODE_ENV: { type: "string", default: "development" },
     PORT: { type: "string", default: "3000" },
     HOST: { type: "string", default: "0.0.0.0" },
+    LOG_LEVEL: { type: "string", default: "info" },
     ANTHROPIC_API_KEY: { type: "string", default: "" },
     ANTHROPIC_MODEL: { type: "string", default: "claude-sonnet-4-6" },
     RATE_LIMIT_MAX: { type: "string", default: "60" },
@@ -19,6 +20,7 @@ export interface Env {
   NODE_ENV: string;
   PORT: string;
   HOST: string;
+  LOG_LEVEL: string;
   ANTHROPIC_API_KEY: string;
   ANTHROPIC_MODEL: string;
   RATE_LIMIT_MAX: string;

@@ -5,6 +5,7 @@ dist
 .DS_Store
 coverage
 .vitest
+logs
 
 .vercel
 .env*.local

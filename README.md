@@ -22,14 +22,15 @@ cp .env.example .env
 
 ## Scripts
 
-| Command             | Description                              |
-| ------------------- | ---------------------------------------- |
-| `npm run dev`       | Run with tsx watch                       |
-| `npm run build`     | Compile TypeScript (emit to `dist/`)     |
-| `npm run typecheck` | Type-check entire codebase (incl. tests) |
-| `npm start`         | Run production build                     |
-| `npm test`          | Run tests                                |
-| `npm run lint`      | ESLint (TypeScript-aware)                |
+| Command                | Description                                           |
+| ---------------------- | ----------------------------------------------------- |
+| `npm run dev`          | Run with tsx watch                                    |
+| `npm run build`        | Compile TypeScript (emit to `dist/`)                   |
+| `npm run typecheck`    | Type-check entire codebase (incl. tests)               |
+| `npm start`            | Run production build                                   |
+| `npm test`             | Run tests (Vitest)                                     |
+| `npm run test:watch`   | Run tests in watch mode                                |
+| `npm run lint`         | ESLint on `src` and root config files (TypeScript-aware) |
 
 ## Endpoints
 
@@ -54,20 +55,23 @@ cp .env.example .env
 - **400** – Missing or empty `feedback_text` (body or empty/whitespace-only string).
 - **429** – Rate limit exceeded.
 - **502** – AI service error or invalid response.
+- **503** – `ANTHROPIC_API_KEY` not configured (`API_KEY_MISSING`).
+- **500** – Unexpected server error (`INTERNAL_ERROR`).
 
 Feedback in any language is analysed; summary and sentiment are always returned in English.
 
 ## Configuration (.env)
 
-| Variable                    | Default           | Description         |
-| --------------------------- | ----------------- | ------------------- |
-| `NODE_ENV`                  | development       | Environment         |
-| `PORT`                      | 3000              | Server port         |
-| `HOST`                      | 0.0.0.0           | Listen host         |
-| `ANTHROPIC_API_KEY`         | (required)        | Anthropic API key   |
-| `ANTHROPIC_MODEL`           | claude-sonnet-4-6 | Claude model        |
-| `RATE_LIMIT_MAX`            | 60                | Requests per window |
-| `RATE_LIMIT_TIME_WINDOW_MS` | 60000             | Window in ms        |
+| Variable                    | Default           | Description              |
+| --------------------------- | ----------------- | ------------------------ |
+| `NODE_ENV`                  | development       | Environment              |
+| `PORT`                      | 3000              | Server port              |
+| `HOST`                      | 0.0.0.0           | Listen host               |
+| `LOG_LEVEL`                 | info              | Pino log level           |
+| `ANTHROPIC_API_KEY`         | (required)        | Anthropic API key        |
+| `ANTHROPIC_MODEL`           | claude-sonnet-4-6 | Claude model             |
+| `RATE_LIMIT_MAX`            | 60                | Requests per window      |
+| `RATE_LIMIT_TIME_WINDOW_MS` | 60000             | Window in ms             |
 
 ## TypeScript
 
@@ -82,6 +86,12 @@ The project is fully TypeScript:
 ## Project structure
 
 ```
+ecosystem.config.cjs   PM2 config for VPS (start with: pm2 start ecosystem.config.cjs)
+eslint.config.js        ESLint flat config (defineConfig, type-aware)
+tsconfig.json           TypeScript build config
+tsconfig.typecheck.json Type-check (incl. tests)
+tsconfig.eslint.json    ESLint parser project (src + config files)
+
 src/
   config/     env schema and config helpers
   models/     request/response types and JSON schemas
@@ -150,10 +160,10 @@ For a long-running Node server on an AWS EC2 instance or another VPS:
   ```bash
   npm install -g pm2
   npm run build
-  pm2 start dist/index.js --name feedback-api
+  pm2 start ecosystem.config.cjs
   pm2 save && pm2 startup
   ```
-  Use `pm2 env` or a `.env` file in the app directory so the process sees `ANTHROPIC_API_KEY` and other vars.
+  The repo includes `ecosystem.config.cjs`: it sets `NODE_ENV=production`, loads `.env`, and writes logs under `logs/`. Ensure `.env` exists in the app directory with `ANTHROPIC_API_KEY` and other vars.
 
 - **systemd** – Create a unit that runs `node /path/to/feedback/dist/index.js` with `EnvironmentFile=/path/to/feedback/.env` and `Restart=always`.
 

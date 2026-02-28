@@ -5,6 +5,6 @@
     "rootDir": ".",
     "allowJs": true
   },
-  "include": ["src/**/*", "vitest.config.ts", "eslint.config.js"],
+  "include": ["src/**/*", "vitest.config.ts", "eslint.config.js", "ecosystem.config.cjs"],
   "exclude": ["node_modules", "dist"]
 }
