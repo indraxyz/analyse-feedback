@@ -48,7 +48,7 @@ cp .env.example .env
 
 **Body:** `{ "feedback_text": "string" }`
 
-**Success (200):** `{ "summary": "string", "sentiment": "positive" | "neutral" | "negative" }`
+**Success (200):** `{ "summary": "string", "sentiment": "positive" | "neutral" | "negative", "language": "string" }` — `language` is the detected language of the feedback (e.g. english, indonesian, japanese).
 
 **Errors:**
 

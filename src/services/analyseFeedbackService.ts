@@ -4,12 +4,13 @@ import type { AnalyseFeedbackResult, SentimentLabel } from "../models/feedback.t
 const SENTIMENTS: SentimentLabel[] = ["positive", "neutral", "negative"];
 
 const SYSTEM_PROMPT = `You are a feedback analyst. Given customer feedback text (in any language), you must:
-1. If the feedback is not in English, mentally translate it to English for analysis.
-2. Produce a short summary in English (1-3 sentences).
-3. Classify sentiment as exactly one of: positive, neutral, negative.
+1. Detect the language of the feedback and report it in lowercase (e.g. english, indonesian, japanese, spanish).
+2. If the feedback is not in English, mentally translate it to English for analysis.
+3. Produce a short summary in English (1-3 sentences).
+4. Classify sentiment as exactly one of: positive, neutral, negative.
 
 Respond ONLY with valid JSON in this exact shape, no markdown or extra text:
-{"summary": "your summary in English", "sentiment": "positive"|"neutral"|"negative"}`;
+{"summary": "your summary in English", "sentiment": "positive"|"neutral"|"negative", "language": "e.g. english, indonesian, japanese"}`;
 
 export interface AnalyseFeedbackDeps {
   apiKey: string;
@@ -33,16 +34,18 @@ function parseResponse(text: string): AnalyseFeedbackResult {
     typeof parsed !== "object" ||
     parsed === null ||
     typeof (parsed as Record<string, unknown>).summary !== "string" ||
-    !SENTIMENTS.includes((parsed as Record<string, unknown>).sentiment as SentimentLabel)
+    !SENTIMENTS.includes((parsed as Record<string, unknown>).sentiment as SentimentLabel) ||
+    typeof (parsed as Record<string, unknown>).language !== "string"
   ) {
     throw new AnalyseFeedbackServiceError(
-      "AI response did not contain valid summary and sentiment",
+      "AI response did not contain valid summary, sentiment, and language",
       "INVALID_RESPONSE"
     );
   }
   return {
     summary: (parsed as { summary: string }).summary,
     sentiment: (parsed as { sentiment: SentimentLabel }).sentiment,
+    language: (parsed as { language: string }).language,
   };
 }
 

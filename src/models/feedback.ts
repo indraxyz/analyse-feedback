@@ -7,6 +7,7 @@ export type SentimentLabel = "positive" | "neutral" | "negative";
 export interface AnalyseFeedbackResult {
   summary: string;
   sentiment: SentimentLabel;
+  language: string;
 }
 
 export const feedbackAnalysisRequestSchema = {
@@ -20,9 +21,13 @@ export const feedbackAnalysisRequestSchema = {
 
 export const analyseFeedbackResponseSchema = {
   type: "object",
-  required: ["summary", "sentiment"],
+  required: ["summary", "sentiment", "language"],
   properties: {
     summary: { type: "string" },
     sentiment: { type: "string", enum: ["positive", "neutral", "negative"] },
+    language: {
+      type: "string",
+      description: "Detected language of the feedback, e.g. english, indonesian, japanese",
+    },
   },
 } as const;

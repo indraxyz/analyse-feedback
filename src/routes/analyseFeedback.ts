@@ -12,13 +12,13 @@ export async function registerAnalyseFeedbackRoute(
 ): Promise<void> {
   app.post<{
     Body: { feedback_text: string };
-    Reply: { summary: string; sentiment: string };
+    Reply: { summary: string; sentiment: string; language: string };
   }>(
     "/api/analyse-feedback",
     {
       schema: {
         description:
-          "Submit customer feedback text (any language). Returns an English summary and sentiment (positive, neutral, or negative) via Anthropic Claude.",
+          "Submit customer feedback text (any language). Returns an English summary, sentiment (positive, neutral, or negative), and detected language via Anthropic Claude.",
         tags: ["Feedback"],
         body: feedbackAnalysisRequestSchema,
         response: {

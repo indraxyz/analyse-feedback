@@ -117,10 +117,11 @@ describe("POST /api/analyse-feedback", () => {
     expect(analyseFeedback).not.toHaveBeenCalled();
   });
 
-  it("returns 200 with summary and sentiment when payload is valid", async () => {
+  it("returns 200 with summary, sentiment, and language when payload is valid", async () => {
     vi.mocked(analyseFeedback).mockResolvedValue({
       summary: "Customer is satisfied with the product.",
       sentiment: "positive",
+      language: "english",
     });
     const app = await buildTestApp({ ANTHROPIC_API_KEY: "test-key" });
     const payload = { feedback_text: "Great product, fast delivery!" };
@@ -133,6 +134,7 @@ describe("POST /api/analyse-feedback", () => {
     const body = res.json();
     expect(body).toHaveProperty("summary", "Customer is satisfied with the product.");
     expect(body).toHaveProperty("sentiment", "positive");
+    expect(body).toHaveProperty("language", "english");
     expect(analyseFeedback).toHaveBeenCalledOnce();
     expect(analyseFeedback).toHaveBeenCalledWith(
       payload.feedback_text,
