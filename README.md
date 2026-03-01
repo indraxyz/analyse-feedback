@@ -2,8 +2,6 @@
 
 REST API for customer feedback analysis using Anthropic Claude. Accepts feedback text (any language), returns an English summary, sentiment, and language.
 
-**Docs:** [docs/](docs/README.md) — Laravel framework reference & guide ([docs/LARAVEL.md](docs/LARAVEL.md)), workflow architecture.
-
 ## Stack
 
 - **Fastify** – main framework
@@ -113,22 +111,6 @@ If you get `502` with `AI_SERVICE_ERROR`:
 2. **API key** – Ensure `ANTHROPIC_API_KEY` in `.env` is valid and has no extra spaces. Create/manage keys at [Anthropic Console](https://console.anthropic.com/).
 3. **Model** – Default is `claude-sonnet-4-6`. If that model is deprecated, set `ANTHROPIC_MODEL` to a current model ID from [Anthropic docs](https://docs.anthropic.com/en/docs/models-overview).
 
-## Deploy on Vercel
-
-This project is set up to deploy on [Vercel](https://vercel.com) with zero-config Fastify support.
-
-1. **Push to Git** and [import the project](https://vercel.com/new) in Vercel (or use [Vercel CLI](https://vercel.com/docs/cli): `vc deploy`).
-
-2. **Set environment variables** in the Vercel project (Settings → Environment Variables):
-   - `ANTHROPIC_API_KEY` (required)
-   - Optionally: `ANTHROPIC_MODEL`, `RATE_LIMIT_MAX`, `RATE_LIMIT_TIME_WINDOW_MS`, `NODE_ENV`
-
-3. **Build** runs `npm run build`; the entrypoint `src/index.ts` is [detected automatically](https://vercel.com/docs/frameworks/backend/fastify).
-
-**Local preview:** `vercel dev` (CLI 48.6.0+).
-
-**Note:** Rate limiting is in-memory per instance; on serverless it applies per function instance, not globally.
-
 ## Production deploy on AWS (EC2 / VPS)
 
 For a long-running Node server on an AWS EC2 instance or another VPS:
@@ -186,7 +168,7 @@ For a long-running Node server on an AWS EC2 instance or another VPS:
 ## Production (general)
 
 - Set **`NODE_ENV=production`**.
-- Use a **process manager** (e.g. PM2) or container/orchestration when not on Vercel; see [Production deploy on AWS (EC2 / VPS)](#production-deploy-on-aws-ec2--vps) above.
+- Use a **process manager** (e.g. PM2) or container/orchestration; see [Production deploy on AWS (EC2 / VPS)](#production-deploy-on-aws-ec2--vps) above.
 - Ensure **`ANTHROPIC_API_KEY`** is set via env (no secrets in code).
 - Tune **`RATE_LIMIT_MAX`** and **`RATE_LIMIT_TIME_WINDOW_MS`** as needed.
 - **Health check:** `GET /health` returns `{ "status": "ok" }`.
