@@ -1,6 +1,8 @@
 # Feedback API
 
-REST API for customer feedback analysis using Anthropic Claude. Accepts feedback text (any language), returns an English summary and sentiment.
+REST API for customer feedback analysis using Anthropic Claude. Accepts feedback text (any language), returns an English summary, sentiment, and language.
+
+**Docs:** [docs/](docs/README.md) — Laravel framework reference & guide ([docs/LARAVEL.md](docs/LARAVEL.md)), workflow architecture.
 
 ## Stack
 
@@ -22,15 +24,15 @@ cp .env.example .env
 
 ## Scripts
 
-| Command                | Description                                           |
-| ---------------------- | ----------------------------------------------------- |
-| `npm run dev`          | Run with tsx watch                                    |
-| `npm run build`        | Compile TypeScript (emit to `dist/`)                   |
-| `npm run typecheck`    | Type-check entire codebase (incl. tests)               |
-| `npm start`            | Run production build                                   |
-| `npm test`             | Run tests (Vitest)                                     |
-| `npm run test:watch`   | Run tests in watch mode                                |
-| `npm run lint`         | ESLint on `src` and root config files (TypeScript-aware) |
+| Command              | Description                                              |
+| -------------------- | -------------------------------------------------------- |
+| `npm run dev`        | Run with tsx watch                                       |
+| `npm run build`      | Compile TypeScript (emit to `dist/`)                     |
+| `npm run typecheck`  | Type-check entire codebase (incl. tests)                 |
+| `npm start`          | Run production build                                     |
+| `npm test`           | Run tests (Vitest)                                       |
+| `npm run test:watch` | Run tests in watch mode                                  |
+| `npm run lint`       | ESLint on `src` and root config files (TypeScript-aware) |
 
 ## Endpoints
 
@@ -62,16 +64,16 @@ Feedback in any language is analysed; summary and sentiment are always returned 
 
 ## Configuration (.env)
 
-| Variable                    | Default           | Description              |
-| --------------------------- | ----------------- | ------------------------ |
-| `NODE_ENV`                  | development       | Environment              |
-| `PORT`                      | 3000              | Server port              |
-| `HOST`                      | 0.0.0.0           | Listen host               |
-| `LOG_LEVEL`                 | info              | Pino log level           |
-| `ANTHROPIC_API_KEY`         | (required)        | Anthropic API key        |
-| `ANTHROPIC_MODEL`           | claude-sonnet-4-6 | Claude model             |
-| `RATE_LIMIT_MAX`            | 60                | Requests per window      |
-| `RATE_LIMIT_TIME_WINDOW_MS` | 60000             | Window in ms             |
+| Variable                    | Default           | Description         |
+| --------------------------- | ----------------- | ------------------- |
+| `NODE_ENV`                  | development       | Environment         |
+| `PORT`                      | 3000              | Server port         |
+| `HOST`                      | 0.0.0.0           | Listen host         |
+| `LOG_LEVEL`                 | info              | Pino log level      |
+| `ANTHROPIC_API_KEY`         | (required)        | Anthropic API key   |
+| `ANTHROPIC_MODEL`           | claude-sonnet-4-6 | Claude model        |
+| `RATE_LIMIT_MAX`            | 60                | Requests per window |
+| `RATE_LIMIT_TIME_WINDOW_MS` | 60000             | Window in ms        |
 
 ## TypeScript
 
@@ -138,6 +140,7 @@ For a long-running Node server on an AWS EC2 instance or another VPS:
 ### Build and run
 
 1. **Clone and install**
+
    ```bash
    git clone <your-repo-url> feedback && cd feedback
    npm ci
@@ -157,12 +160,14 @@ For a long-running Node server on an AWS EC2 instance or another VPS:
 ### Process manager (recommended)
 
 - **PM2**
+
   ```bash
   npm install -g pm2
   npm run build
   pm2 start ecosystem.config.cjs
   pm2 save && pm2 startup
   ```
+
   The repo includes `ecosystem.config.cjs`: it sets `NODE_ENV=production`, loads `.env`, and writes logs under `logs/`. Ensure `.env` exists in the app directory with `ANTHROPIC_API_KEY` and other vars.
 
 - **systemd** – Create a unit that runs `node /path/to/feedback/dist/index.js` with `EnvironmentFile=/path/to/feedback/.env` and `Restart=always`.
