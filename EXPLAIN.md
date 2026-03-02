@@ -6,7 +6,7 @@
 2. **Backend Server**: AWS EC2 instance for API (port 3000)
 3. **Google Console API**: Service account with Sheets API enabled
 4. **Telegram Bot**: Bot token and channel ID configured
-5. **AI Model API Key**: For sentiment analysis on backend
+5. **AI Model API Key (Claude)**: For sentiment analysis on backend
 
 ### Required Credentials
 
@@ -55,6 +55,7 @@
 - **AWS EC2**: Backend API server (3.107.178.138)
 - **Google Console API**: Sheets API access
 - **Telegram Bot API**: Message delivery
+- **VPS free tier**: production (Oracle cloud, AWS EC2), dev/test (Ngrok)
 
 ## Data Flow
 
@@ -144,10 +145,11 @@
 
 ### Minimum Current Cost Drivers
 
-- VPS (free tier)/ Sumopod hosting for n8n (IDR 20K)
+- VPS (free tier)/ Sumopod server for n8n (IDR 20K)
 - AWS EC2 instance for backend (free tier)
 - Google Sheets API calls (free tier)
 - AI model API usage (free tier)
+- VPS free tier: production (Oracle cloud, AWS EC2), dev/test (Ngrok)
 
 ### Cost-Saving Strategies
 
