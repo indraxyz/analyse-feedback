@@ -2,37 +2,63 @@
 
 When a new row is added to a Google Sheet, the system summarises the feedback with AI, classifies sentiment, detects the feedback language, and posts the result to Telegram.
 
-**Flow:** Google Sheet (new row) → n8n (poll every minute) → Fastify API → Telegram
+**Flow:** n8n (orchestrator) listens to Google Sheet → sends to Backend API (request/response) → formats and posts to Telegram.
 
 ---
 
 ## Diagram
 
-![Feedback workflow: Google Sheets → n8n → Fastify API → Telegram](./workflow-diagram.png)
+![Feedback workflow: Triggers → API call → Return path → Data transform → Telegram](./workflow-diagram.png)
+
+*To regenerate the PNG from the Mermaid source: `npm run docs:diagram` (uses `docs/workflow-diagram.mmd`).*
 
 ```mermaid
 flowchart LR
-    subgraph TRIGGER
-        GS[Google Sheets\nNew row]
+    subgraph TRIGGERS["① TRIGGERS"]
+        GS[Google Sheets\nNew row added]
+        T1[n8n: Google Sheets Trigger\npoll every min · rowAdded]
+        GS --> T1
     end
 
-    subgraph N8N["n8n"]
-        DETECT[Google Sheets Trigger\npoll: every minute\nrowAdded]
-        HTTP["HTTP Request\nPOST http://<vps>:3000/api/analyse-feedback\ntimeout: 10s\nretries: 2"]
-        FMT[Set\nFormat Message\nretries: 2]
-        TG_SEND[Telegram\nSend Message]
+    subgraph APICALL["② API CALL"]
+        REQ[n8n: HTTP POST\n/api/analyse-feedback\nfeedback_text]
+        T1 --> REQ
     end
 
-    subgraph API["Fastify API"]
-        RECV["{ feedback_text }"]
-        ANTHROPIC[Anthropic Claude]
-        RET["{ summary, sentiment, language }"]
+    subgraph BACKEND["Fastify API"]
+        RECV[Receive feedback_text]
+        AI[Anthropic Claude\nsummary · sentiment · language]
+        RECV --> AI
     end
 
-    TG[Telegram]
+    subgraph RETURNPATH["③ RETURN PATH"]
+        RES[Response to n8n\nsummary, sentiment, language]
+        AI --> RES
+    end
 
-    GS --> DETECT --> HTTP --> RECV --> ANTHROPIC --> RET --> FMT --> TG_SEND --> TG
+    subgraph DATATRANSFORM["④ DATA TRANSFORM"]
+        FMT[n8n: Format Message\nCustomer · summary · sentiment · time]
+        SEND[n8n: Telegram Send\nMarkdown]
+        FMT --> SEND
+    end
+
+    subgraph OUT["Telegram"]
+        CHAN[Channel message]
+    end
+
+    REQ --> RECV
+    RES --> FMT
+    SEND --> CHAN
 ```
+
+### Two-way integration (overview)
+
+| Integration | Direction | Description |
+| ----------- | --------- | ----------- |
+| **Google Sheets ↔ n8n** | Sheet → n8n | n8n **listens** (polls every minute); when a **new row** is added, the trigger fires and n8n receives row data (e.g. Customer Name, Feedback). |
+| **n8n ↔ Fastify API** | n8n → API | n8n **sends** `POST` with `feedback_text`. |
+| **n8n ↔ Fastify API** | API → n8n | API **returns** `{ summary, sentiment, language }` to n8n. |
+| **n8n → Telegram** | n8n → Telegram | n8n **posts** the formatted message (no response needed). |
 
 ---
 

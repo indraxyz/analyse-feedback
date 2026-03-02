@@ -1,0 +1,36 @@
+flowchart LR
+    subgraph TRIGGERS["① TRIGGERS"]
+        GS[Google Sheets\nNew row added]
+        T1[n8n: Google Sheets Trigger\npoll every min · rowAdded]
+        GS --> T1
+    end
+
+    subgraph APICALL["② API CALL"]
+        REQ[n8n: HTTP POST\n/api/analyse-feedback\nfeedback_text]
+        T1 --> REQ
+    end
+
+    subgraph BACKEND["Fastify API"]
+        RECV[Receive feedback_text]
+        AI[Anthropic Claude\nsummary · sentiment · language]
+        RECV --> AI
+    end
+
+    subgraph RETURNPATH["③ RETURN PATH"]
+        RES[Response to n8n\nsummary, sentiment, language]
+        AI --> RES
+    end
+
+    subgraph DATATRANSFORM["④ DATA TRANSFORM"]
+        FMT[n8n: Format Message\nCustomer · summary · sentiment · time]
+        SEND[n8n: Telegram Send\nMarkdown]
+        FMT --> SEND
+    end
+
+    subgraph OUT["Telegram"]
+        CHAN[Channel message]
+    end
+
+    REQ --> RECV
+    RES --> FMT
+    SEND --> CHAN
