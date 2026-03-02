@@ -34,9 +34,20 @@
   - Data transformation (Set node)
   - Telegram integration
 
-### Backend Framework Options
+### Backend Framework: Laravel vs Fastify
 
-- **Fastify** or **Laravel**: REST API framework for feedback analysis
+| Criteria                    | Laravel (PHP)                                          | Fastify (Node.js)                                               |
+| --------------------------- | ------------------------------------------------------ | --------------------------------------------------------------- |
+| **Runtime**                 | PHP, typically Apache/Nginx + PHP-FPM                  | Node.js, single process or cluster                              |
+| **Performance**             | Good for full-stack apps; more overhead per request    | High throughput, low latency; built for APIs                    |
+| **API focus**               | Full-stack framework; API is one use case              | Designed for APIs and services; minimal surface                 |
+| **AI/HTTP integration**     | SDKs available; extra process or queue for long calls  | Same language as most AI SDKs; async I/O, easy timeouts/retries |
+| **Deployment**              | Needs PHP runtime, Composer, often separate web server | Single Node process; simple `node dist/index.js` or Docker      |
+| **Resource usage**          | Higher baseline (PHP-FPM workers, OpCache)             | Lighter; one Node process handles many concurrent requests      |
+| **TypeScript**              | PHP only (no TS on backend)                            | Native TypeScript; strict typing end-to-end                     |
+| **Rate limiting / plugins** | Middleware; built-in throttle                          | Plugin ecosystem (`@fastify/rate-limit`, CORS, Swagger)         |
+
+**Production choice: Fastify.** This project uses **Fastify** for the live production backend. keeps stack and deployment simple (Node.js + TypeScript).
 
 ### Infrastructure Services
 
